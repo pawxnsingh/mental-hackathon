@@ -12,4 +12,5 @@ const ThreadSchema = new Schema<IThread>(
   { timestamps: true }
 );
 
-export const Thread = mongoose.models.Thread || mongoose.model<IThread>("Thread", ThreadSchema);
+export const Thread =
+  mongoose.models.Thread || mongoose.model<IThread>("Thread", ThreadSchema);
