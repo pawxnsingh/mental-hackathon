@@ -1,7 +1,13 @@
+import { connectDB } from "@/lib/db";
+import { User } from "@/app/models/user";
 import { NextResponse } from "next/server";
 
-export const GET = async () => {
-  return NextResponse.json({
-    message: "abcd",
-  });
-};
+export async function GET() {
+  await connectDB();
+  console.log("Connected");
+
+  const users = {
+    abcd: "abcd",
+  };
+  return NextResponse.json(users);
+}
