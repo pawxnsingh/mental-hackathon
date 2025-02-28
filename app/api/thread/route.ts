@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
+import { User } from '@/app/models/user';
 
 // POST handler: creates a new chat thread
 export async function POST(request: Request) {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
     const { title } = body;
     
     // Create a new chat thread (adjust the API according to your ORM)
-    const chatThread = await db.chatThread.create({
+    const chatThread = await Thread.create({
       data: { title }
     });
     
