@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
-import { User } from '@/app/models/user';
 
 // POST handler: creates a new chat thread
 export async function POST(request: Request) {
