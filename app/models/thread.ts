@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 const chatThreadSchema = new mongoose.Schema({
+  // Use UUID as the document _id
+  _id: {
+    type: String,
+    default: uuidv4,
+  },
   title: {
     type: String,
     required: true,
@@ -14,6 +20,7 @@ const chatThreadSchema = new mongoose.Schema({
   }
 });
 
+// Optionally, add a method to mimic the __str__ behavior
 chatThreadSchema.methods.toString = function() {
   return this.title;
 };
