@@ -15,4 +15,4 @@ chatThreadSchema.methods.toString = function() {
   return this.title;
 };
 
-module.exports = mongoose.model('ChatThread', chatThreadSchema);
+export const Thread = mongoose.model('ChatThread', chatThreadSchema);
