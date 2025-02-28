@@ -3,7 +3,7 @@ import { User } from "@/app/models/user";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  await connectDB();
+//   await connectDB();
   console.log("Connected");
 
   const users = {
