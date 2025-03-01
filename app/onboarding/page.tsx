@@ -25,8 +25,12 @@ const languages = [
 const Onboarding = () => {
   const { isLoaded, isSignedIn, userId, sessionId, getToken } = useAuth();
   const { user } = useUser();
+  console.log(user?.emailAddresses[0].emailAddress);
+  console.log(user?.fullName);
+  console.log(user?.id);
+
   const router = useRouter();
-  
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     gender: "",
@@ -80,26 +84,32 @@ const Onboarding = () => {
     }));
   };
 
+  // Inside your handleSubmit function in the Onboarding component
+  // Update this part:
+
   const handleSubmit = async () => {
-    if (!isSignedIn || !userId) {
-      console.error("User not authenticated");
+    if (!isSignedIn || !userId || !user) {
+      console.error("User not authenticated or user data not loaded");
       return;
     }
 
     try {
       const token = await getToken();
-      
+
       const res = await axios.post(
         "/api/onboarding",
         {
           ...formData,
           userId,
+          // Add these fields from Clerk user object
+          name: user.fullName,
+          email: user.emailAddresses[0].emailAddress,
           onboardingComplete: true,
         },
         {
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -113,6 +123,19 @@ const Onboarding = () => {
     } catch (error) {
       console.error("Error submitting:", error);
     }
+  };
+
+  // Validation functions for each step
+  const isStep1Valid = () => {
+    return formData.gender !== "" && formData.role !== "";
+  };
+
+  const isStep2Valid = () => {
+    return formData.mentalHealthGoals.length > 0;
+  };
+
+  const isStep3Valid = () => {
+    return formData.preferredLanguage !== "";
   };
 
   // Show loading state while auth is being determined
@@ -172,7 +195,12 @@ const Onboarding = () => {
 
             <button
               onClick={handleNext}
-              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow transition duration-200 ease-in-out"
+              disabled={!isStep1Valid()}
+              className={`w-full py-3 px-4 ${
+                isStep1Valid()
+                  ? "bg-indigo-600 hover:bg-indigo-700"
+                  : "bg-indigo-300 cursor-not-allowed"
+              } text-white font-medium rounded-lg shadow transition duration-200 ease-in-out`}
             >
               Continue
             </button>
@@ -240,7 +268,12 @@ const Onboarding = () => {
               </button>
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow transition duration-200 ease-in-out"
+                disabled={!isStep2Valid()}
+                className={`flex-1 py-3 px-4 ${
+                  isStep2Valid()
+                    ? "bg-indigo-600 hover:bg-indigo-700"
+                    : "bg-indigo-300 cursor-not-allowed"
+                } text-white font-medium rounded-lg shadow transition duration-200 ease-in-out`}
               >
                 Continue
               </button>
@@ -280,7 +313,12 @@ const Onboarding = () => {
               </button>
               <button
                 onClick={handleSubmit}
-                className="flex-1 py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow transition duration-200 ease-in-out"
+                disabled={!isStep3Valid()}
+                className={`flex-1 py-3 px-4 ${
+                  isStep3Valid()
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-green-300 cursor-not-allowed"
+                } text-white font-medium rounded-lg shadow transition duration-200 ease-in-out`}
               >
                 Complete
               </button>
