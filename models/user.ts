@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-// Define User Interface
 export interface IUser extends Document {
   clerkUserId: string;
   name: string;
@@ -15,60 +14,41 @@ export interface IUser extends Document {
   dob: Date;
 }
 
-// Define Supported Indian Languages Enum
-const IndianLanguagesEnum = {
-  values: [
-    "English",
-    "Hindi",
-    "Bengali",
-    "Gujarati",
-    "Kannada",
-    "Malayalam",
-    "Marathi",
-    "Tamil",
-    "Telugu",
-    "Urdu",
-    "Punjabi",
-  ],
-  message: "Invalid Indian Language",
-};
+// Supported Indian Languages Enum
+const IndianLanguagesEnum = [
+  "English",
+  "Hindi",
+  "Bengali",
+  "Gujarati",
+  "Kannada",
+  "Malayalam",
+  "Marathi",
+  "Tamil",
+  "Telugu",
+  "Urdu",
+  "Punjabi",
+];
 
 // Define User Schema
 const UserSchema = new Schema<IUser>(
   {
-    clerkUserId: { type: String, required: true, unique: true }, // Clerk User ID for authentication
+    clerkUserId: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     preferredLanguage: {
       type: String,
-      enum: IndianLanguagesEnum.values,
+      enum: IndianLanguagesEnum,
       default: "English",
     },
-    dob: {
-      type: Date,
-      required: true,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female", "other"],
-    },
-    onboardingComplete: {
-      type: Boolean,
-      default: false,
-    },
-    mentalHealthGoals: {
-      type: [String], // Array of mental health goals
-      default: [],
-    },
-    role: {
-      type: String,
-      enum: ["student", "counselor"],
-      default: "student",
-    },
+    dob: { type: Date, required: true },
+    gender: { type: String, enum: ["male", "female", "other"] },
+    onboardingComplete: { type: Boolean, default: false },
+    mentalHealthGoals: { type: [String], default: [] },
+    role: { type: String, enum: ["student", "counselor"], default: "student" },
   },
   { timestamps: true }
 );
 
-UserSchema.index({ email: 1 });
-
-export const User =  mongoose.model<IUser>("User", UserSchema);
+// Prevent OverwriteModelError
+export const User =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
