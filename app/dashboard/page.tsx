@@ -1,4 +1,4 @@
-
+"use client";
 import React, { useState } from 'react';
 import { Message, ChatSession } from '@/types/chat';
 import ChatSidebar from '@/components/chat/ChatSidebar';
