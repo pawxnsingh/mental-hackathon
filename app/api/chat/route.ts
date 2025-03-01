@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import OpenAI from "openai";
 import { User } from "@/models/user";
 import { Message, IMessage } from "@/models/message";
+import { ElevenLabsClient, play } from "elevenlabs";
+
 import { getAuth } from "@clerk/nextjs/server";
 import { RESPOND_TO_MESSAGE_SYSTEM_PROMPT } from "@/prompts/systemprompt";
 
@@ -9,22 +11,44 @@ const openai = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: "https://api.deepseek.com/v1",
 });
+// A helper function to pick a Voice ID based on the language.
+// You'll need to create or use existing voices in your ElevenLabs dashboard.
+// Replace these placeholders with real Voice IDs.
 
-const generateSystemMessage = (previousMessages: IMessage[]) => {
-  const context = previousMessages
-    .map((msg) => {
-      const time = new Date(msg.createdAt).toLocaleTimeString();
-      return `[${time}] ${msg.message.toUpperCase()}: ${msg.response}`;
-    })
-    .join("\n");
+function getVoiceIdByLanguage(lang: string) {
+  switch (lang.toLowerCase()) {
+    case "english":
+      return "aEO01A4wXwd1O8GPgGlF";
+    case "hindi":
+      return "FFmp1h1BMl0iVHA0JxrI";
+    case "tamil":
+      return "1XNFRxE3WBB7iI0jnm7p";
+  }
+}
 
-  const systemMessage = {
-    role: "developer",
-    content: `Here is the conversation so far:\n${context}`,
-  };
+interface LlmResponse {
+  message: string;
+  emergency: boolean;
+  language: string;
+  context: string;
+}
 
-  return systemMessage;
-};
+// Main function to process JSON and call ElevenLabs
+async function generateAudioFromResponse(jsonData: LlmResponse) {
+  const { message, language } = jsonData;
+  const voiceId = getVoiceIdByLanguage(language);
+
+  const { ElevenLabsClient } = require("elevenlabs");
+  const client = new ElevenLabsClient();
+
+  const audioBuffer = await client.textToSpeech.convert(voiceId, {
+    text: message,
+    model_id: "eleven_multilingual_v2",
+    output_format: "mp3_44100_128",
+  });
+
+  return audioBuffer;
+}
 
 export async function POST(req: NextRequest) {
   const userId = "user_2tgdHjnel0Svpv4XxCKjKrg7L2a";
@@ -37,10 +61,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { message, thread_id } = body;
+    // here audio is the boolean value, if true then we need to send the audio response
+    const { message: message_from_user, thread_id, audio } = body;
 
     console.log("Received request for patient(patientid): ", userId);
-    console.log("Received request for patient(message): ", message);
+    console.log("Received request for patient(message): ", message_from_user);
     console.log("Received request for patient(threadid): ", thread_id);
 
     // // Get patient details
@@ -64,7 +89,7 @@ export async function POST(req: NextRequest) {
       },
     ];
 
-    const context = previousMessages
+    const prev_mess = previousMessages
       .map((msg) => {
         const time = new Date(msg.createdAt).toLocaleTimeString();
         return `[${time}] ${msg.message.toUpperCase()}: ${msg.response}`;
@@ -82,7 +107,7 @@ export async function POST(req: NextRequest) {
         {
           // heres the system message, of the conversation so far
           role: "system",
-          content: context,
+          content: prev_mess,
         },
         {
           // heres the system message, which user prefers this language
@@ -93,12 +118,30 @@ export async function POST(req: NextRequest) {
           // heres the user actual message
           role: "user",
           content: message,
-        }
+        },
       ],
     });
 
     const response =
       answerResponse.choices[0]?.message?.content || "No response received";
+
+    console.log("Received response from OpenAI: ", response);
+
+    // @ts-ignore
+    const { emergency, message, language, context } =
+      answerResponse.choices[0]?.message?.content || {};
+    console.log("Emergency status: ", emergency);
+    console.log("Response language: ", language);
+    console.log("Context: ", context);
+    console.log("Response message: ", message);
+
+    if (audio) {
+      // here we need to convert the text to audio
+      // and send the audio response
+      const audio = await generateAudioFromResponse(answerResponse.choices[0]?.message?.content);
+
+      return NextResponse.json({ a }, { status: 200 });
+    }
 
     await Message.create({
       thread: thread_id,
