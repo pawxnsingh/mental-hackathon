@@ -32,14 +32,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" passHref>
-            <a className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
-                <Brain className="h-5 w-5" />
-              </div>
-              <span className="font-bold text-xl">MindSync</span>
-            </a>
-          </Link>
+          <Link href="/" className="flex items-center space-x-2">
+  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+    <Brain className="h-5 w-5" />
+  </div>
+</Link>
+
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
@@ -74,15 +72,16 @@ const Navbar = () => {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link href="/chat" passHref>
-                      <a className="group inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none">
-                        <MessageSquare className="h-4 w-4 mr-2" />
-                        Chat Now
-                      </a>
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+  <NavigationMenuLink asChild>
+    <Link 
+      href="/chat"
+      className="group inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none"
+    >
+      <MessageSquare className="h-4 w-4 mr-2" />
+      Chat Now
+    </Link>
+  </NavigationMenuLink>
+</NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
             

@@ -52,7 +52,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartChat }) => {
             <div className="mt-10 lg:mt-0 flex justify-center">
               <div className="relative w-full max-w-lg h-80 md:h-96">
                 <Image 
-                  src="https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" 
+                  src={"https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80"}
                   alt="Peaceful meditation scene" 
                   className="rounded-lg shadow-xl"
                   fill
