@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Navbar } from "@/components/navbar";
 import {
   ClerkProvider,
   SignInButton,
@@ -40,9 +41,11 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <Navbar/>
           {children}
         </body>
       </html>
     </ClerkProvider>
+    
   );
 }

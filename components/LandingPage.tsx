@@ -8,48 +8,7 @@ export async function EnhancedLandingPage() {
   const User=await currentUser();
   console.log(User?.id);
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex justify-between items-center px-8 py-4 bg-purple-500 text-white">
-        {/* Logo */}
-        <div className="flex items-center">
-          <span className="flex items-center justify-center w-8 h-8 bg-white text-purple-500 rounded-full font-bold mr-2">R</span>
-          <span className="text-xl font-bold">ReplyGuy</span>
-        </div>
-        
-        {/* Navigation */}
-        <nav className="hidden md:flex gap-8">
-          <a href="#faq" className="font-medium hover:underline">FAQ</a>
-          <a href="#pricing" className="font-medium hover:underline">Pricing</a>
-          <a href="#blog" className="font-medium hover:underline">Blog</a>
-        </nav>
-        
-        {/* Auth Button */}
-        <div>
-        <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-            <Button>
-              <SignInButton />
-              </Button>
-              <Button>
-              <SignUpButton />
-              </Button>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-        </div>
-      </header>
-
-      {/* Mobile Navigation (shown only on small screens) */}
-      <div className="md:hidden flex justify-center gap-4 py-2 bg-purple-400 text-white">
-        <a href="#faq" className="font-medium hover:underline">FAQ</a>
-        <a href="#pricing" className="font-medium hover:underline">Pricing</a>
-        <a href="#blog" className="font-medium hover:underline">Blog</a>
-      </div>
-
-      {/* Main Content */}
+    <div>      {/* Main Content */}
       <main className="flex-1 flex flex-col justify-center items-center px-4 py-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to ReplyGuy</h1>
