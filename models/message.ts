@@ -10,7 +10,7 @@ export interface IMessage extends Document {
   messageType: "text" | "image" | "audio" | "file"; // Defines type of message
 }
 
-const MessageSchema = new Schema<IMessage>(
+export const MessageSchema = new Schema<IMessage>(
   {
     thread: {
       type: mongoose.Schema.Types.ObjectId,

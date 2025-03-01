@@ -9,8 +9,10 @@ export interface IUser extends Document {
   onboardingComplete: boolean;
   mentalHealthGoals: string[];
   role: "student" | "counselor";
+  gender: "male" | "female";
   createdAt: Date;
   updatedAt: Date;
+  dob: Date;
 }
 
 // Define Supported Indian Languages Enum
@@ -42,6 +44,14 @@ const UserSchema = new Schema<IUser>(
       enum: IndianLanguagesEnum.values,
       default: "English",
     },
+    dob: {
+      type: Date,
+      required: true,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
     onboardingComplete: {
       type: Boolean,
       default: false,
@@ -61,4 +71,4 @@ const UserSchema = new Schema<IUser>(
 
 UserSchema.index({ email: 1 });
 
-export const User = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+export const User =  mongoose.model<IUser>("User", UserSchema);
