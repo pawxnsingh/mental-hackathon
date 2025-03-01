@@ -4,13 +4,16 @@ import { Message } from "@/models/message";
 
 // POST handler: creates a new chat thread
 export async function POST(request: Request) {
+  // here we have to add the user id
+  const userId = "user_2tgdHjnel0Svpv4XxCKjKrg7L2a";
+
   try {
     const body = await request.json();
     const { title } = body;
 
     // Create a new chat thread (adjust the API according to your ORM)
     const chatThread = await Thread.create({
-      data: { title },
+      data: { title, user: userId },
     });
 
     return NextResponse.json(
@@ -28,6 +31,8 @@ export async function POST(request: Request) {
 // GET handler: retrieves either messages for a thread (if thread_id is provided)
 // or all chat threads if no thread_id is given.
 export async function GET(request: Request) {
+  const user_id = "user_2tgdHjnel0Svpv4XxCKjKrg7L2a";
+
   const { searchParams } = new URL(request.url);
   const threadId = searchParams.get("thread_id");
 
@@ -35,11 +40,11 @@ export async function GET(request: Request) {
     try {
       // Retrieve messages for the specific thread
       const messages = await Message.find({
-        where: { thread_id: Number(threadId) },
+        where: { thread: threadId, user: user_id },
         select: {
           id: true,
-          thread_id: true,
-          patient_id: true,
+          thread: true,
+          user: true,
           message: true,
           response: true,
           created_at: true,
@@ -55,17 +60,24 @@ export async function GET(request: Request) {
   }
 
   // If no thread_id is provided, return all chat threads
-  const threads = await Thread.find({
-    select: {
-      id: true,
-      title: true,
-      created_at: true,
+  const threads = await Thread.find(
+    {
+      user: user_id,
     },
-  });
+    {
+      select: {
+        id: true,
+        title: true,
+        created_at: true,
+      },
+    }
+  );
   return NextResponse.json(threads);
 }
 
 export async function DELETE(request: Request) {
+  const user_id = "user_2tgdHjnel0Svpv4XxCKjKrg7L2a";
+
   try {
     const { searchParams } = new URL(request.url);
     const threadId = searchParams.get("thread_id");
@@ -77,7 +89,9 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const thread = await Thread.findByIdAndDelete(threadId);
+    const thread = await Thread.findByIdAndDelete({
+      where: { id: threadId, user: user_id },
+    });
 
     if (!thread) {
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
